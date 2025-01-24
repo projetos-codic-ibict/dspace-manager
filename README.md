@@ -51,3 +51,8 @@ install`, etc... a partir de qualquer diretório.
 - `restart`: Equivalente a rodar `stop -> start`.
 - `start`: Inicia o sistema (requer instalação e build para funcionar).
 - `stop`: Interrompe a execução do sistema se estiver rodando no momento.
+
+## Compatibilidade
+
+Os scripts foram testados com DSpace 7 e DSpace 8. Eles **não** funcionarão com
+versões anteriores.
