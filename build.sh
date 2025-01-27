@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-SCRIPT_DIR=$(dirname $(realpath "$0"))
+SCRIPT_DIR="$(dirname $(realpath "$0"))"
 
 . "$SCRIPT_DIR/_shared.sh"
 
@@ -16,6 +16,7 @@ update_installation() {
 }
 
 init_variables
+. "$SCRIPT_DIR/stop.sh"
 remove_target
 install_maven_dependencies
 remove_log_files

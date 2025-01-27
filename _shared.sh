@@ -13,11 +13,31 @@ echo_warn() {
 }
 
 init_variables() {
-  SCRIPT_DIR=$(dirname $(realpath "$0"))
+  SCRIPT_DIR="$(dirname $(realpath "$0"))"
 
   . "$SCRIPT_DIR/.env"
 
   return 0
+}
+
+echo_java_version() {
+  echo "$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')"
+}
+
+echo_java_major_version() {
+  local version="$(echo_java_version)"
+
+  if echo "$version" | grep "^1\.[1-9]\+\." >/dev/null 2>&1; then
+    version="$(echo "$version" | cut -d "." -f 2)"
+  else
+    version="$(echo "$version" | cut -d "." -f 1)"
+  fi
+
+  echo "$version"
+}
+
+echo_dspace_major_version() {
+  echo "$(echo "$DSPACE_VERSION" | cut -d "." -f 1)"
 }
 
 add_webapps_to_tomcat() {
@@ -36,6 +56,12 @@ add_webapps_to_tomcat() {
     fi
   done
 
+  # TODO: deixar isto customizável
+  if [ "$(echo_dspace_major_version)" = "6" ]; then
+    rm -rf "$TOMCAT_DIR/webapps/ROOT"
+    ln -s "$webapps_dir/jspui" "$TOMCAT_DIR/webapps/ROOT"
+  fi
+
   return 0
 }
 
@@ -50,10 +76,15 @@ install_maven_dependencies() {
   echo_info "Instalando dependências maven"
   echo_info "Você precisa manualmente editar o arquivo de configuração do maven para para preveni-lo de bloquear http, veja: https://stackoverflow.com/a/67295342"
 
-  # TODO: find a way to remove sudo
-  sudo "$MAVEN_DIR/bin/mvn" package
-  local current_user="$(whoami)"
-  sudo chown "$current_user:$current_user" -R .
+  if [ "$(echo_dspace_major_version)" = "6" ]; then
+    # (miguilim)
+    "$MAVEN_DIR/bin/mvn" clean package -P !dspace-sword,!dspace-swordv2,!dspace-oai
+  else
+    # TODO: find a way to remove sudo
+    sudo "$MAVEN_DIR/bin/mvn" package
+    local current_user="$(whoami)"
+    sudo chown "$current_user:$current_user" -R .
+  fi
 
   return 0
 }
@@ -102,11 +133,13 @@ setup_postgres() {
   echo_info "Criando banco de dados $DSPACE_DB_NAME para o usuário $DSPACE_DB_USERNAME"
   sudo -iu postgres createdb --owner="$DSPACE_DB_USERNAME" --encoding=UNICODE "$DSPACE_DB_NAME"
 
-  echo_info "Criando extensão pgcrypto no banco $DSPACE_DB_USERNAME"
-  # BUG: Por algum motivo isso ainda deu erro de "peer authentication"
-  # sudo -iu postgres psql "$DSPACE_DB_NAME" "$DSPACE_DB_USERNAME" -c "CREATE EXTENSION pgcrypto;"
-  # sudo -iu postgres psql -d "$DSPACE_DB_NAME" -U "$DSPACE_DB_USERNAME" -c "CREATE EXTENSION pgcrypto;"
-  sudo -iu postgres psql -d "$DSPACE_DB_NAME" -c "CREATE EXTENSION pgcrypto;"
+  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 4 ]; then
+    echo_info "Criando extensão pgcrypto no banco $DSPACE_DB_USERNAME"
+    # BUG: Por algum motivo isso ainda deu erro de "peer authentication"
+    # sudo -iu postgres psql "$DSPACE_DB_NAME" "$DSPACE_DB_USERNAME" -c "CREATE EXTENSION pgcrypto;"
+    # sudo -iu postgres psql -d "$DSPACE_DB_NAME" -U "$DSPACE_DB_USERNAME" -c "CREATE EXTENSION pgcrypto;"
+    sudo -iu postgres psql -d "$DSPACE_DB_NAME" -c "CREATE EXTENSION pgcrypto;"
+  fi
 
   if [ -n "$DSPACE_DB_DUMP_FILE" ]; then
     echo_info "Importando o dump do banco de dados"

@@ -54,5 +54,4 @@ install`, etc... a partir de qualquer diretório.
 
 ## Compatibilidade
 
-Os scripts foram testados com DSpace 7 e DSpace 8. Eles **não** funcionarão com
-versões anteriores.
+Os scripts foram testados com as versões 6, 7 e 8 do DSpace.
