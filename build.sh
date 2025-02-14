@@ -12,7 +12,7 @@ remove_log_files() {
 update_installation() {
   echo_info "Atualizando instalação"
   cd "$DSPACE_SOURCE_DIR/dspace/target/dspace-installer"
-  ant -Dconfig=$DSPACE_INSTALLATION_DIR/config/dspace.cfg update
+  ant update
 }
 
 init_variables
