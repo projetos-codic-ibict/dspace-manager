@@ -21,4 +21,5 @@ remove_target
 install_maven_dependencies
 remove_log_files
 update_installation
+remove_bak_files
 add_webapps_to_tomcat

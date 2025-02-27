@@ -166,6 +166,7 @@ install_dspace && {
     copy_solr_cores
   fi
 } &&
+remove_bak_files &&
 add_webapps_to_tomcat &&
 create_dspace_administrator && {
   if [ "$INSTALL_SHOULD_REINDEX" != true ]; then

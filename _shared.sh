@@ -40,6 +40,13 @@ echo_dspace_major_version() {
   echo "$(echo "$DSPACE_VERSION" | cut -d "." -f 1)"
 }
 
+remove_bak_files() {
+  echo_info "Removendo arquivos .bak"
+  if [ -n "$DSPACE_INSTALLATION_DIR" ]; then
+    rm -rf "$DSPACE_INSTALLATION_DIR/"*.bak*
+  fi
+}
+
 add_webapps_to_tomcat() {
   echo_info "Adicionando webapps ao Tomcat"
 
