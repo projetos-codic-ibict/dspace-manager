@@ -23,7 +23,7 @@ remove_directories() {
   done
 }
 
-remove_assets() {
+remove_dependencies() {
   local asset_var_names="SOLR_ZIP MAVEN_ZIP TOMCAT_ZIP"
 
   echo_info "Removendo assets"
@@ -42,4 +42,4 @@ init_variables
 . "$SCRIPT_DIR/stop.sh"
 drop_dspace_user_and_databases
 remove_directories
-remove_assets
+remove_dependencies
