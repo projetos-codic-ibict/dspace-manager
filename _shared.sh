@@ -84,7 +84,6 @@ install_maven_dependencies() {
   echo_info "Você precisa manualmente editar o arquivo de configuração do maven para para preveni-lo de bloquear http, veja: https://stackoverflow.com/a/67295342"
 
   if [ "$(echo_dspace_major_version)" = "6" ]; then
-    # (miguilim)
     "$MAVEN_DIR/bin/mvn" clean package -P !dspace-sword,!dspace-swordv2,!dspace-oai
   else
     # TODO: find a way to remove sudo
