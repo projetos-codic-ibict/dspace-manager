@@ -39,7 +39,7 @@ download_asset() {
   local url="$1"
   local path="$2"
 
-  curl -sL "$url" -o "$path"
+  curl -L "$url" -o "$path"
 
   return 0
 }
