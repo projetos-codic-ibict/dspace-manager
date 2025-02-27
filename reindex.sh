@@ -9,7 +9,8 @@ init_variables
 echo_info "Re-indexando"
 
 if [ "$1" = "" ]; then
-  "$DSPACE_INSTALLATION_DIR/bin/dspace" index-discovery -b >/dev/null 2>&1 &
+  "$DSPACE_INSTALLATION_DIR/bin/dspace" index-discovery -c >/dev/null 2>&1 &
+  "$DSPACE_INSTALLATION_DIR/bin/dspace" index-discovery -f >/dev/null 2>&1 &
 else
   "$DSPACE_INSTALLATION_DIR/bin/dspace" index-discovery -i "$1" >/dev/null 2>&1 &
 fi
