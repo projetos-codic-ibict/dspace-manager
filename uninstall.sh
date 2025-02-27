@@ -42,4 +42,6 @@ init_variables
 . "$SCRIPT_DIR/stop.sh"
 drop_dspace_user_and_databases
 remove_directories
-remove_dependencies
+if [ "$UNINSTALL_SHOULD_REMOVE_DEPENDENCIES" != false ]; then
+  remove_dependencies
+fi
