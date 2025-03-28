@@ -27,7 +27,7 @@ a partir do diretório deste projeto, por exemplo:
 
 ```sh
 # Rode isso no diretório deste projeto, ou substitua $PWD pelo diretório correto.
-sudo ln -s $PWD /usr/local/bin/dm
+sudo ln -s $PWD/manager.sh /usr/local/bin/dm
 ```
 
 Isso te permite rodar os scripts simplesmente usando `dm uninstall`, `dm
