@@ -159,7 +159,7 @@ setup_postgres && {
 } &&
 install_maven_dependencies &&
 install_dspace && {
-  if [ "$(echo_dspace_major_version)" -gt 6 ]; then
+  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
     copy_solr_cores
   fi
 } &&
