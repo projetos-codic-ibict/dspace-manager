@@ -20,6 +20,7 @@ update_installation() {
 init_variables
 . "$SCRIPT_DIR/stop.sh"
 remove_target
+check_java_version
 install_maven_dependencies
 remove_log_files
 update_installation
