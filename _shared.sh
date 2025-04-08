@@ -47,6 +47,33 @@ echo_dspace_major_version() {
   echo "$(echo "$DSPACE_VERSION" | cut -d "." -f 1)"
 }
 
+check_java_version() {
+  local has_update_alternatives="$(which update-alternatives >/dev/null 2>&1 && echo true || echo false)"
+  local must_change_version=false
+
+  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
+    if [ "$(echo_java_major_version)" -lt 17 ]; then
+      must_change_version=true
+      echo_info "Você deve mudar a versão padrão do java para a versão 17 ou superior"
+    fi
+  else
+    if [ "$(echo_java_major_version)" != 8 ]; then
+      must_change_version=true
+      echo_info "Você deve mudar a versão padrão do java para a versão 8"
+    fi
+  fi
+
+  if [ "$must_change_version" = false ]; then
+    return
+  fi
+
+  if [ $has_update_alternatives ]; then
+    sudo update-alternatives --config java
+  else
+    exit 1
+  fi
+}
+
 remove_bak_files() {
   echo_info "Removendo arquivos .bak"
   if [ -n "$DSPACE_INSTALLATION_DIR" ]; then

@@ -77,20 +77,7 @@ setup_requirements() {
 
   echo_info "Tornando scripts do Tomcat em executáveis"
   chmod u+x "$TOMCAT_DIR/bin"/*.sh
-
-  local java_version=""
-
-  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
-    if [ "$(echo_dspace_major_version)" -lt 17 ]; then
-      echo_info "Você deve mudar a versão padrão do java para a versão 17 ou superior"
-      sudo update-alternatives --config java
-    fi
-  else
-    if [ "$(echo_java_major_version)" != 8 ]; then
-      echo_info "Você deve mudar a versão padrão do java para a versão 8"
-      sudo update-alternatives --config java
-    fi
-  fi
+  check_java_version
 }
 
 clone_repository() {
