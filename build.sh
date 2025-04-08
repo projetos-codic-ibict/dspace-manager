@@ -4,6 +4,8 @@ SCRIPT_DIR="$(dirname $(realpath "$0"))"
 
 . "$SCRIPT_DIR/_shared.sh"
 
+check_current_dir
+
 remove_log_files() {
   echo_info "Removendo arquivos de log na instalação do DSpace"
   rm -f $DSPACE_INSTALLATION_DIR/log/*

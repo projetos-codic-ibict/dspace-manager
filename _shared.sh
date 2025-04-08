@@ -12,6 +12,13 @@ echo_warn() {
   echo "Aviso:" $@
 }
 
+check_current_dir() {
+  if [ ! -d "$PWD" ]; then
+    echo_error "O diretório atual não existe"
+    exit 1
+  fi
+}
+
 init_variables() {
   SCRIPT_DIR="$(dirname $(realpath "$0"))"
 

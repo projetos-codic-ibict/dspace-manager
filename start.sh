@@ -4,6 +4,8 @@ SCRIPT_DIR="$(dirname $(realpath "$0"))"
 
 . "$SCRIPT_DIR/_shared.sh"
 
+check_current_dir
+
 on_sigint() {
   . "$SCRIPT_DIR/stop.sh"
 }

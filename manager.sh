@@ -4,6 +4,8 @@ SCRIPT_DIR="$(dirname $(realpath "$0"))"
 
 . "$SCRIPT_DIR/_shared.sh"
 
+check_current_dir
+
 runner="$SCRIPT_DIR/$1.sh"
 
 if [ -f "$runner" -a $(echo $1 | grep -v "^_") ]; then
