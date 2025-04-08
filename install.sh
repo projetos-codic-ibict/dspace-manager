@@ -114,7 +114,15 @@ clone_repository() {
 
 edit_config_file() {
   if [ "$COPY_CONFIG_FILE" = true ]; then
-    cp "$DSPACE_SOURCE_DIR/dspace/config/local.cfg.EXAMPLE" "$DSPACE_SOURCE_DIR/dspace/config/local.cfg"
+    local config_template_file
+
+    if [ -n "$CONFIG_EXAMPLE_FILE" ]; then
+      config_template_file="$CONFIG_EXAMPLE_FILE"
+    else
+      config_template_file="$DSPACE_SOURCE_DIR/dspace/config/local.cfg.EXAMPLE"
+    fi
+
+    cp "$config_template_file" "$DSPACE_SOURCE_DIR/dspace/config/local.cfg"
   fi
 
   echo_info "Editando arquivo de configuração"
