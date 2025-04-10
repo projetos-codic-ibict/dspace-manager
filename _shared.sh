@@ -120,10 +120,7 @@ install_maven_dependencies() {
   if [ "$(echo_dspace_major_version)" = "6" ]; then
     "$MAVEN_DIR/bin/mvn" clean package -P !dspace-sword,!dspace-swordv2,!dspace-oai
   else
-    # TODO: find a way to remove sudo
-    sudo "$MAVEN_DIR/bin/mvn" clean package
-    local current_user="$(whoami)"
-    sudo chown "$current_user:$current_user" -R .
+    "$MAVEN_DIR/bin/mvn" clean package
   fi
 
   return 0
