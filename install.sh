@@ -138,7 +138,6 @@ copy_solr_cores() {
   # [solr] is the location where Solr is installed.
   # NOTE: On Debian systems the configsets may be under /var/solr/data/configsets
   cp -R "$DSPACE_INSTALLATION_DIR/solr"/* "$SOLR_DIR/server/solr/configsets"
-  sudo chown -R fcisco:fcisco .
 
   # Make sure everything is owned by the system user who owns Solr
   # Usually this is a 'solr' user account
