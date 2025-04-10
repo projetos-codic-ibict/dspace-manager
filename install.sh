@@ -129,8 +129,7 @@ install_dspace() {
   echo_info "Instalando o DSpace"
   mkdir -p "$DSPACE_INSTALLATION_DIR"
   cd "$DSPACE_SOURCE_DIR/dspace/target/dspace-installer"
-  sudo ant fresh_install
-  sudo chown -R fcisco:fcisco "$DSPACE_INSTALLATION_DIR"
+  ant fresh_install
 
   return 0
 }
