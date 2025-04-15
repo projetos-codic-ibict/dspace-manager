@@ -42,6 +42,7 @@ remove_dependencies() {
 
 init_variables
 . "$SCRIPT_DIR/stop.sh"
+check_postgres
 drop_dspace_user_and_databases
 remove_directories
 if [ "$UNINSTALL_SHOULD_REMOVE_DEPENDENCIES" != false ]; then

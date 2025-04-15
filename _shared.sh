@@ -107,6 +107,13 @@ check_ant() {
   fi
 }
 
+check_postgres() {
+  if ! sudo -iu postgres which psql >/dev/null 2>&1; then
+    echo_error "psql não foi encontrado"
+    exit 1
+  fi
+}
+
 remove_bak_files() {
   echo_info "Removendo arquivos .bak"
   if [ -n "$DSPACE_INSTALLATION_DIR" ]; then
