@@ -43,23 +43,41 @@ echo_java_major_version() {
   echo "$version"
 }
 
+echo_javac_version() {
+  echo "$(javac -version 2>&1 | awk '{print $2}')"
+}
+
+echo_javac_major_version() {
+  local version="$(echo_javac_version)"
+
+  if echo "$version" | grep "^1\.[1-9]\+\." >/dev/null 2>&1; then
+    version="$(echo "$version" | cut -d "." -f 2)"
+  else
+    version="$(echo "$version" | cut -d "." -f 1)"
+  fi
+
+  echo "$version"
+}
+
 echo_dspace_major_version() {
   echo "$(echo "$DSPACE_VERSION" | cut -d "." -f 1)"
 }
 
-check_java_version() {
+check_java_tool_version() {
+  local tool="$1"
+  local version_func="echo_${tool}_major_version"
   local has_update_alternatives="$(which update-alternatives >/dev/null 2>&1 && echo true || echo false)"
   local must_change_version=false
 
   if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
-    if [ "$(echo_java_major_version)" -lt 17 ]; then
+    if [ "$($version_func)" -lt 17 ]; then
       must_change_version=true
-      echo_info "Você deve mudar a versão padrão do java para a versão 17 ou superior"
+      echo_info "Você deve mudar a versão padrão do ${tool} para a versão 17 ou superior"
     fi
   else
-    if [ "$(echo_java_major_version)" != 8 ]; then
+    if [ "$($version_func)" != 8 ]; then
       must_change_version=true
-      echo_info "Você deve mudar a versão padrão do java para a versão 8"
+      echo_info "Você deve mudar a versão padrão do ${tool} para a versão 8"
     fi
   fi
 
@@ -68,10 +86,18 @@ check_java_version() {
   fi
 
   if [ $has_update_alternatives ]; then
-    sudo update-alternatives --config java
+    sudo update-alternatives --config "${tool}"
   else
     exit 1
   fi
+}
+
+check_java_version() {
+  check_java_tool_version "java"
+}
+
+check_javac_version() {
+  check_java_tool_version "javac"
 }
 
 remove_bak_files() {

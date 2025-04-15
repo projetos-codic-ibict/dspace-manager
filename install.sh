@@ -78,6 +78,7 @@ setup_requirements() {
   echo_info "Tornando scripts do Tomcat em executáveis"
   chmod u+x "$TOMCAT_DIR/bin"/*.sh
   check_java_version
+  check_javac_version
 }
 
 clone_repository() {
