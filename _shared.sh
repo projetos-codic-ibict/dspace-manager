@@ -100,6 +100,13 @@ check_javac_version() {
   check_java_tool_version "javac"
 }
 
+check_ant() {
+  if ! which ant >/dev/null 2>&1; then
+    echo_error "ant não foi encontrado"
+    exit 1
+  fi
+}
+
 remove_bak_files() {
   echo_info "Removendo arquivos .bak"
   if [ -n "$DSPACE_INSTALLATION_DIR" ]; then
