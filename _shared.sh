@@ -160,7 +160,12 @@ install_maven_dependencies() {
   if [ "$(echo_dspace_major_version)" = "6" ]; then
     "$MAVEN_DIR/bin/mvn" clean package -P !dspace-sword,!dspace-swordv2,!dspace-oai
   else
-    "$MAVEN_DIR/bin/mvn" clean package
+    # Segundo o ChatGPT, `-DskipTests` pula a *execução* de testes, mas as
+    # classes de testes ainda são compiladas. Para pular a compilação dessas
+    # classes, seria necessário usar na verdade `-Dmaven.test.skip=true`,
+    # porém, na minha experiência, isso causa erro de compilação.
+    # Ainda também falta deixar esse comando customizável de alguma forma.
+    "$MAVEN_DIR/bin/mvn" package -DskipTests
   fi
 
   return 0
