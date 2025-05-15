@@ -18,7 +18,6 @@ update_installation() {
 }
 
 init_variables
-. "$SCRIPT_DIR/stop.sh"
 check_ant
 check_java_version
 check_javac_version
