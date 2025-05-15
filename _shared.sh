@@ -146,12 +146,6 @@ add_webapps_to_tomcat() {
   return 0
 }
 
-remove_target() {
-  cd "$DSPACE_SOURCE_DIR"
-  echo_info "Removendo target"
-  git clean -X -f **/target
-}
-
 install_maven_dependencies() {
   cd "$DSPACE_SOURCE_DIR"
   echo_info "Instalando dependências maven"
