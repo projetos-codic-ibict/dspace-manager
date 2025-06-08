@@ -183,7 +183,12 @@ start_tomcat() {
 
 start_solr() {
   echo_info "Iniciando execução do solr"
-  "$SOLR_DIR/bin/solr" start
+
+  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -ge 9 ]; then
+    "$SOLR_DIR/bin/solr" start -Dsolr.config.lib.enabled=true
+  else
+    "$SOLR_DIR/bin/solr" start
+  fi
 }
 
 drop_dspace_user_and_databases() {
