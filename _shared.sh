@@ -173,7 +173,7 @@ stop_tomcat() {
 
 stop_solr() {
   echo_info "Parando execução do solr"
-  "$SOLR_DIR/bin/solr" stop -all
+  "$SOLR_DIR/bin/solr" stop --all
 }
 
 start_tomcat() {
