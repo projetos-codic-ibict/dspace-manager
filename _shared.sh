@@ -152,9 +152,17 @@ build() {
   echo_info "Você precisa manualmente editar o arquivo de configuração do maven para para preveni-lo de bloquear http, veja: https://stackoverflow.com/a/67295342"
 
   if [ "$(echo_dspace_major_version)" = "6" ]; then
-    "$MAVEN_DIR/bin/mvn" clean package -P !dspace-sword,!dspace-swordv2,!dspace-oai
+    if [ "$1" = "clean" ]; then
+      "$MAVEN_DIR/bin/mvn" clean package -P !dspace-sword,!dspace-swordv2,!dspace-oai
+    else
+      "$MAVEN_DIR/bin/mvn" package -P !dspace-sword,!dspace-swordv2,!dspace-oai
+    fi
   else
-    "$MAVEN_DIR/bin/mvn" clean package
+    if [ "$1" = "clean" ]; then
+      "$MAVEN_DIR/bin/mvn" clean package
+    else
+      "$MAVEN_DIR/bin/mvn" package
+    fi
   fi
 
   return 0
