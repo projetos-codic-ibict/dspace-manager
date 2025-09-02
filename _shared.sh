@@ -146,7 +146,7 @@ add_webapps_to_tomcat() {
   return 0
 }
 
-install_maven_dependencies() {
+build() {
   cd "$DSPACE_SOURCE_DIR"
   echo_info "Instalando dependências maven"
   echo_info "Você precisa manualmente editar o arquivo de configuração do maven para para preveni-lo de bloquear http, veja: https://stackoverflow.com/a/67295342"

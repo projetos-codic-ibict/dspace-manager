@@ -158,7 +158,7 @@ setup_postgres && {
     edit_config_file
   fi
 } &&
-install_maven_dependencies &&
+build &&
 install_dspace && {
   if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
     copy_solr_cores

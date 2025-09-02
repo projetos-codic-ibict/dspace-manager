@@ -21,7 +21,8 @@ init_variables
 check_ant
 check_java_version
 check_javac_version
-install_maven_dependencies
+shift
+build "$@"
 remove_log_files
 update_installation
 remove_bak_files
