@@ -7,7 +7,7 @@ SCRIPT_DIR="$(dirname $(realpath "$0"))"
 check_current_dir
 
 remove_directories() {
-  local dir_var_names="SOLR_DIR MAVEN_DIR TOMCAT_DIR DSPACE_INSTALLATION_DIR"
+  local dir_var_names="MAVEN_DIR TOMCAT_DIR DSPACE_INSTALLATION_DIR"
 
   if [ "$UNINSTALL_SHOULD_REMOVE_DSPACE_SOURCE_DIR" = "true" ]; then
     dir_var_names="$dir_var_names DSPACE_SOURCE_DIR"
@@ -26,7 +26,7 @@ remove_directories() {
 }
 
 remove_dependencies() {
-  local asset_var_names="SOLR_ZIP MAVEN_ZIP TOMCAT_ZIP"
+  local asset_var_names="MAVEN_ZIP TOMCAT_ZIP"
 
   echo_info "Removendo assets"
 

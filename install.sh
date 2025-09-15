@@ -71,10 +71,6 @@ setup_requirements() {
     download_and_or_extract_zip "$TOMCAT_ZIP_URL" "$TOMCAT_ZIP" "$TOMCAT_DIR" || return 1
   fi
 
-  if ( [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ] ) && [ ! -d "$SOLR_DIR" ]; then
-    download_and_or_extract_zip "$SOLR_ZIP_URL" "$SOLR_ZIP" "$SOLR_DIR" || return 1
-  fi
-
   echo_info "Tornando scripts do Tomcat em executáveis"
   chmod u+x "$TOMCAT_DIR/bin"/*.sh
   check_ant
@@ -137,19 +133,6 @@ install_dspace() {
   return 0
 }
 
-copy_solr_cores() {
-  # [solr] is the location where Solr is installed.
-  # NOTE: On Debian systems the configsets may be under /var/solr/data/configsets
-  cp -R "$DSPACE_INSTALLATION_DIR/solr"/* "$SOLR_DIR/server/solr/configsets"
-
-  # Make sure everything is owned by the system user who owns Solr
-  # Usually this is a 'solr' user account
-  # See https://solr.apache.org/guide/8_1/taking-solr-to-production.html#create-the-solr-user
-  # chown -R solr:solr [solr]/server/solr/configsets
-
-  return 0
-}
-
 init_variables &&
 setup_requirements &&
 clone_repository &&
@@ -159,20 +142,12 @@ setup_postgres && {
   fi
 } &&
 build &&
-install_dspace && {
-  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
-    copy_solr_cores
-  fi
-} &&
+install_dspace &&
 remove_bak_files &&
 add_webapps_to_tomcat &&
 create_dspace_administrator && {
   if [ "$INSTALL_SHOULD_REINDEX" != true ]; then
     exit 0
-  fi
-
-  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
-    start_solr
   fi
 
   "$TOMCAT_DIR/bin/catalina.sh" start

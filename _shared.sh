@@ -69,16 +69,9 @@ check_java_tool_version() {
   local has_update_alternatives="$(which update-alternatives >/dev/null 2>&1 && echo true || echo false)"
   local must_change_version=false
 
-  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
-    if [ "$($version_func)" -lt 17 ]; then
-      must_change_version=true
-      echo_info "Você deve mudar a versão padrão do ${tool} para a versão 17 ou superior"
-    fi
-  else
-    if [ "$($version_func)" != 8 ]; then
-      must_change_version=true
-      echo_info "Você deve mudar a versão padrão do ${tool} para a versão 8"
-    fi
+  if [ "$($version_func)" != 8 ]; then
+    must_change_version=true
+    echo_info "Você deve mudar a versão padrão do ${tool} para a versão 8"
   fi
 
   if [ "$must_change_version" = false ]; then
@@ -138,10 +131,8 @@ add_webapps_to_tomcat() {
   done
 
   # TODO: deixar isto customizável
-  if [ "$(echo_dspace_major_version)" = "6" ]; then
-    rm -rf "$TOMCAT_DIR/webapps/ROOT"
-    ln -s "$webapps_dir/jspui" "$TOMCAT_DIR/webapps/ROOT"
-  fi
+  rm -rf "$TOMCAT_DIR/webapps/ROOT"
+  ln -s "$webapps_dir/jspui" "$TOMCAT_DIR/webapps/ROOT"
 
   return 0
 }
@@ -151,18 +142,10 @@ build() {
   echo_info "Instalando dependências maven"
   echo_info "Você precisa manualmente editar o arquivo de configuração do maven para para preveni-lo de bloquear http, veja: https://stackoverflow.com/a/67295342"
 
-  if [ "$(echo_dspace_major_version)" = "6" ]; then
-    if [ "$1" = "clean" ]; then
-      "$MAVEN_DIR/bin/mvn" clean package -P !dspace-sword,!dspace-swordv2,!dspace-oai
-    else
-      "$MAVEN_DIR/bin/mvn" package -P !dspace-sword,!dspace-swordv2,!dspace-oai
-    fi
+  if [ "$1" = "clean" ]; then
+    "$MAVEN_DIR/bin/mvn" clean package -P !dspace-sword,!dspace-swordv2,!dspace-oai
   else
-    if [ "$1" = "clean" ]; then
-      "$MAVEN_DIR/bin/mvn" clean package
-    else
-      "$MAVEN_DIR/bin/mvn" package
-    fi
+    "$MAVEN_DIR/bin/mvn" package -P !dspace-sword,!dspace-swordv2,!dspace-oai
   fi
 
   return 0
@@ -173,24 +156,9 @@ stop_tomcat() {
   "$TOMCAT_DIR/bin/shutdown.sh" 2> /dev/null
 }
 
-stop_solr() {
-  echo_info "Parando execução do solr"
-  "$SOLR_DIR/bin/solr" stop --all
-}
-
 start_tomcat() {
   echo_info "Iniciando execução do tomcat"
   "$TOMCAT_DIR/bin/catalina.sh" run
-}
-
-start_solr() {
-  echo_info "Iniciando execução do solr"
-
-  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -ge 9 ]; then
-    "$SOLR_DIR/bin/solr" start -Dsolr.config.lib.enabled=true
-  else
-    "$SOLR_DIR/bin/solr" start
-  fi
 }
 
 drop_dspace_user_and_databases() {
@@ -217,13 +185,11 @@ setup_postgres() {
   echo_info "Criando banco de dados $DSPACE_DB_NAME para o usuário $DSPACE_DB_USERNAME"
   sudo -iu postgres createdb --owner="$DSPACE_DB_USERNAME" --encoding=UNICODE "$DSPACE_DB_NAME"
 
-  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 4 ]; then
-    echo_info "Criando extensão pgcrypto no banco $DSPACE_DB_USERNAME"
-    # BUG: Por algum motivo isso ainda deu erro de "peer authentication"
-    # sudo -iu postgres psql "$DSPACE_DB_NAME" "$DSPACE_DB_USERNAME" -c "CREATE EXTENSION pgcrypto;"
-    # sudo -iu postgres psql -d "$DSPACE_DB_NAME" -U "$DSPACE_DB_USERNAME" -c "CREATE EXTENSION pgcrypto;"
-    sudo -iu postgres psql -d "$DSPACE_DB_NAME" -c "CREATE EXTENSION pgcrypto;"
-  fi
+  echo_info "Criando extensão pgcrypto no banco $DSPACE_DB_USERNAME"
+  # BUG: Por algum motivo isso ainda deu erro de "peer authentication"
+  # sudo -iu postgres psql "$DSPACE_DB_NAME" "$DSPACE_DB_USERNAME" -c "CREATE EXTENSION pgcrypto;"
+  # sudo -iu postgres psql -d "$DSPACE_DB_NAME" -U "$DSPACE_DB_USERNAME" -c "CREATE EXTENSION pgcrypto;"
+  sudo -iu postgres psql -d "$DSPACE_DB_NAME" -c "CREATE EXTENSION pgcrypto;"
 
   if [ -n "$DSPACE_DB_DUMP_FILE" ]; then
     echo_info "Importando o dump do banco de dados"
