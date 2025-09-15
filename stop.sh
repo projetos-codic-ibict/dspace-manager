@@ -7,8 +7,5 @@ SCRIPT_DIR="$(dirname $(realpath "$0"))"
 check_current_dir
 
 init_variables &&
-stop_tomcat && {
-  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
-    stop_solr
-  fi
-}
+stop_tomcat &&
+stop_solr

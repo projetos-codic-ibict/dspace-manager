@@ -71,7 +71,7 @@ setup_requirements() {
     download_and_or_extract_zip "$TOMCAT_ZIP_URL" "$TOMCAT_ZIP" "$TOMCAT_DIR" || return 1
   fi
 
-  if ( [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ] ) && [ ! -d "$SOLR_DIR" ]; then
+  if [ ! -d "$SOLR_DIR" ]; then
     download_and_or_extract_zip "$SOLR_ZIP_URL" "$SOLR_ZIP" "$SOLR_DIR" || return 1
   fi
 
@@ -159,11 +159,8 @@ setup_postgres && {
   fi
 } &&
 build &&
-install_dspace && {
-  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
-    copy_solr_cores
-  fi
-} &&
+install_dspace &&
+copy_solr_cores &&
 remove_bak_files &&
 add_webapps_to_tomcat &&
 create_dspace_administrator && {
@@ -171,9 +168,7 @@ create_dspace_administrator && {
     exit 0
   fi
 
-  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
-    start_solr
-  fi
+  start_solr
 
   "$TOMCAT_DIR/bin/catalina.sh" start
 
