@@ -59,6 +59,18 @@ echo_javac_major_version() {
   echo "$version"
 }
 
+echo_solr_version() {
+  "$SOLR_DIR/bin/solr" -v | grep -o "[1-9]\+\.[1-9]\+\.[1-9]\+"
+}
+
+echo_solr_major_version() {
+  echo_solr_version | cut -d "." -f 1
+}
+
+echo_solr_minor_version() {
+  echo_solr_version | cut -d "." -f 2
+}
+
 echo_dspace_major_version() {
   echo "$(echo "$DSPACE_VERSION" | cut -d "." -f 1)"
 }
@@ -186,7 +198,8 @@ start_tomcat() {
 start_solr() {
   echo_info "Iniciando execução do solr"
 
-  if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -ge 9 ]; then
+  # Solr 9.8 e acima precisam da configuração "solr.config.lib.enabled=true"
+  if [ "$(echo_solr_major_version)" -gt 9 ] || ( [ "$(echo_solr_major_version)" = "9" ] && [ "$(echo_solr_minor_version)" -ge 8 ] ); then
     "$SOLR_DIR/bin/solr" start -Dsolr.config.lib.enabled=true
   else
     "$SOLR_DIR/bin/solr" start
