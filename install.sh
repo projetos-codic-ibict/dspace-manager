@@ -81,6 +81,7 @@ setup_requirements() {
   check_postgres
   check_java_version
   check_javac_version
+  check_tomcat_version
 }
 
 clone_repository() {

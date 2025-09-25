@@ -1,15 +1,15 @@
 #!/usr/bin/bash
 
 echo_info() {
-  echo "Info:" $@
+  echo "Info:" "$@"
 }
 
 echo_error() {
-  echo "Erro:" $@ >&2
+  echo "Erro:" "$@" >&2
 }
 
 echo_warn() {
-  echo "Aviso:" $@
+  echo "Aviso:" "$@"
 }
 
 check_current_dir() {
@@ -73,6 +73,14 @@ echo_solr_minor_version() {
 
 echo_dspace_major_version() {
   echo "$(echo "$DSPACE_VERSION" | cut -d "." -f 1)"
+}
+
+echo_tomcat_version() {
+  java -cp "$TOMCAT_DIR/lib/catalina.jar" org.apache.catalina.util.ServerInfo | grep "Server version:" | grep -o "[0-9\.]\+"
+}
+
+echo_tomcat_major_version() {
+  echo_tomcat_version | cut -d "." -f 1
 }
 
 check_java_tool_version() {
@@ -171,6 +179,20 @@ stop_solr() {
     "$SOLR_DIR/bin/solr" stop --all
   else
     "$SOLR_DIR/bin/solr" stop -all
+  fi
+}
+
+check_tomcat_version() {
+  if
+    ( [ "$(echo_dspace_major_version)" = 7 ] && [ "$(echo_tomcat_major_version)" -gt 9 ] ) ||
+    ( [ "$(echo_dspace_major_version)" = 8 ] && [ "$(echo_tomcat_major_version)" != 10 ] ) ||
+    ( [ "$(echo_dspace_major_version)" = 9 ] && [ "$(echo_tomcat_major_version)" != 10 ] );
+  then
+    echo_error "A versão do tomcat não é compatível com a versão do DSpace"
+    echo_error "Versão do DSpace: $DSPACE_VERSION"
+    echo_error "Versão do Tomcat: $(echo_tomcat_version)"
+    echo_error "Verifique a documentação do DSpace para saber a versão correta"
+    exit 1
   fi
 }
 
