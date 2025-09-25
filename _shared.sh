@@ -187,7 +187,12 @@ stop_tomcat() {
 
 stop_solr() {
   echo_info "Parando execução do solr"
-  "$SOLR_DIR/bin/solr" stop --all
+
+  if [ "$(echo_solr_major_version)" -gt 9 ]; then
+    "$SOLR_DIR/bin/solr" stop --all
+  else
+    "$SOLR_DIR/bin/solr" stop -all
+  fi
 }
 
 start_tomcat() {
