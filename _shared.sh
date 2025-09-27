@@ -196,8 +196,23 @@ check_tomcat_version() {
   fi
 }
 
+# https://github.com/DSpace/DSpace/blob/main/dspace/config/config-definition.xml
+export_dspace_vars() {
+  export dspace__P__dir="$DSPACE_INSTALLATION_DIR"
+
+  if [ -n "$DSPACE_DB_URL" ]; then
+    export db__P__url="$DSPACE_DB_URL"
+  else
+    export db__P__url="jdbc:postgresql://localhost:5432/$DSPACE_DB_NAME"
+  fi
+
+  export db__P__username="$DSPACE_DB_USERNAME"
+  export db__P__password="$DSPACE_DB_PASSWORD"
+}
+
 start_tomcat() {
   echo_info "Iniciando execução do tomcat"
+  export_dspace_vars
   "$TOMCAT_DIR/bin/catalina.sh" run
 }
 

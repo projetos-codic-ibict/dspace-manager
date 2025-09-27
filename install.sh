@@ -133,7 +133,8 @@ install_dspace() {
   echo_info "Instalando o DSpace"
   mkdir -p "$DSPACE_INSTALLATION_DIR"
   cd "$DSPACE_SOURCE_DIR/dspace/target/dspace-installer"
-  ant fresh_install
+  export_dspace_vars
+  ant -Ddspace.dir="$DSPACE_INSTALLATION_DIR" fresh_install
 
   return 0
 }
