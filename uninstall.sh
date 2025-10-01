@@ -26,7 +26,7 @@ remove_directories() {
 }
 
 remove_dependencies() {
-  local asset_var_names="SOLR_ZIP MAVEN_ZIP TOMCAT_ZIP"
+  local asset_var_names="SOLR_ARCHIVE MAVEN_ARCHIVE TOMCAT_ARCHIVE"
 
   echo_info "Removendo assets"
 

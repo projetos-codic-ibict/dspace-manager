@@ -23,14 +23,34 @@ check_dir() {
   return 0
 }
 
-extract_zip() {
-  local zip_file="$1"
+echo_file_extension() {
+  echo "$1" | grep -o "\.\w\+$" | sed "s/^.//"
+}
+
+extract_archive() {
+  local archive="$1"
   local target_dir="$2"
   local temp_dir="$(mktemp -d)"
 
   check_dir "$target_dir" || return 1
-  echo_info "Extraindo arquivo zip $zip_file"
-  unzip "$zip_file" -d "$temp_dir"
+  echo_info "Extraindo $archive"
+
+  case "$(echo_file_extension)" in
+    *.zip)
+      unzip "$archive" -d "$temp_dir"
+            ;;
+    *.tgz)
+      tar -C "$temp_dir" -xvzf "$archive"
+            ;;
+    *.tar.gz)
+      tar -C "$temp_dir" -xvf "$archive"
+            ;;
+    *)
+      echo_error "Tipo de arquivo desconhecido"
+      return 1
+            ;;
+  esac
+
   mv "$temp_dir"/* "$target_dir"
   rmdir "$temp_dir"
 
@@ -46,33 +66,33 @@ download_asset() {
   return 0
 }
 
-download_and_or_extract_zip() {
+download_and_or_extract_archive() {
   local download_url="$1"
-  local zip_path="$2"
+  local archive_path="$2"
   local dir="$3"
 
-  if [ ! -f "$zip_path" ]; then
-    download_asset "$download_url" "$zip_path"
+  if [ ! -f "$archive_path" ]; then
+    download_asset "$download_url" "$archive_path"
   fi
 
-  extract_zip "$zip_path" "$dir" || return 1
+  extract_archive "$archive_path" "$dir" || return 1
 
   return 0
 }
 
 setup_requirements() {
-  echo_info "Extraindo arquivos zip do Maven e Tomcat"
+  echo_info "Extraindo arquivos compactados do Maven e Tomcat"
 
   if [ ! -d "$MAVEN_DIR" ]; then
-    download_and_or_extract_zip "$MAVEN_ZIP_URL" "$MAVEN_ZIP" "$MAVEN_DIR" || return 1
+    download_and_or_extract_archive "$MAVEN_ARCHIVE_URL" "$MAVEN_ARCHIVE" "$MAVEN_DIR" || return 1
   fi
 
   if [ ! -d "$TOMCAT_DIR" ]; then
-    download_and_or_extract_zip "$TOMCAT_ZIP_URL" "$TOMCAT_ZIP" "$TOMCAT_DIR" || return 1
+    download_and_or_extract_archive "$TOMCAT_ARCHIVE_URL" "$TOMCAT_ARCHIVE" "$TOMCAT_DIR" || return 1
   fi
 
   if [ ! -d "$SOLR_DIR" ]; then
-    download_and_or_extract_zip "$SOLR_ZIP_URL" "$SOLR_ZIP" "$SOLR_DIR" || return 1
+    download_and_or_extract_archive "$SOLR_ARCHIVE_URL" "$SOLR_ARCHIVE" "$SOLR_DIR" || return 1
   fi
 
   echo_info "Tornando scripts do Tomcat em executáveis"
