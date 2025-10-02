@@ -57,7 +57,11 @@ download_asset() {
   local url="$1"
   local path="$2"
 
-  curl -L "$url" -o "$path"
+  if [ -n "$path" ]; then
+    curl -L "$url" -o "$path"
+  else
+    curl -L "$url" -O
+  fi
 
   return 0
 }
@@ -67,13 +71,22 @@ handle_dep() {
   eval local dep_dir="\$${dep_name_upper}_DIR"
   eval local dep_archive="\$${dep_name_upper}_ARCHIVE"
   eval local dep_archive_url="\$${dep_name_upper}_ARCHIVE_URL"
+  local dep_archive_temp_dir
 
   if [ ! -d "$dep_dir" ] ; then
-    if [ ! -f "$dep_archive" ]; then
+    if [ -z "$dep_archive" ]; then
+      dep_archive_temp_dir="$(mktemp -d "dspace-manager.XXXXXXXXXX" -p "${TMPDIR:/tmp}")"
+      (cd "$dep_archive_temp_dir" && download_asset "$dep_archive_url")
+      dep_archive="${dep_archive_temp_dir}/$(ls "$dep_archive_temp_dir")"
+    elif [ ! -f "$dep_archive" ]; then
       download_asset "$dep_archive_url" "$dep_archive"
     fi
 
     extract_archive "$dep_archive" "$dep_dir" || return 1
+
+    if [ -n "dep_archive_temp_dir" ]; then
+      rm -r "$dep_archive_temp_dir"
+    fi
 
     return 0
   fi
