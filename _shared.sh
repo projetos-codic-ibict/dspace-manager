@@ -60,7 +60,7 @@ echo_javac_major_version() {
 }
 
 echo_solr_version() {
-  "$SOLR_DIR/bin/solr" -v | grep -o "[1-9]\+\.[1-9]\+\.[1-9]\+"
+  "$SOLR_DIR/bin/solr" -v | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+"
 }
 
 echo_solr_major_version() {
