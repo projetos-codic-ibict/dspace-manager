@@ -272,6 +272,50 @@ setup_postgres() {
   return 0
 }
 
+echo_maven_download_url() {
+  local maven_version="3.8.1"
+  local maven_major_version="$(echo "$maven_version" | cut -d "." -f 1)"
+  echo "https://archive.apache.org/dist/maven/maven-$maven_major_version/$maven_version/binaries/apache-maven-$maven_version-bin.zip"
+}
+
+echo_tomcat_download_url() {
+  local tomcat_version
+
+  if [ "$(echo_dspace_major_version)" = 7 ]; then
+    # OBS.: A documentação do DSpace 7 diz "Somente tomcat 9 é suportado no
+    # momento", dando a entender que pode-se usar qualquer versão `9.x.x`, mas na
+    # prática a versão `9.0.1` (a primeira versão estável em
+    # https://archive.apache.org/dist/tomcat/tomcat-9/) não funciona. No
+    # Dockerfile usado no DSpace 7 padrão, a imagem usada para o tomcat é
+    # `tomcat:9-jdk${JDK_VERSION}` no docker.io, que usa a versão `9.0.109`
+    # (https://github.com/docker-library/tomcat/blob/94c77e8566af1da3e5642b17cde61870e09073d5/9.0/jdk11/temurin-noble/Dockerfile#L19C20-L19C27).
+    tomcat_version="9.0.109"
+  else
+    tomcat_version="10.1.0"
+  fi
+
+  local tomcat_major_version="$(echo "$tomcat_version" | cut -d "." -f 1)"
+  echo "https://archive.apache.org/dist/tomcat/tomcat-$tomcat_major_version/v$tomcat_version/bin/apache-tomcat-$tomcat_version.zip"
+}
+
+echo_solr_download_url() {
+  local solr_version
+
+  if [ "$(echo_dspace_major_version)" -gt 7 ]; then
+    solr_version="9.0.0"
+  else
+    solr_version="8.11.1"
+  fi
+
+  local solr_major_version="$(echo "$solr_version" | cut -d "." -f 1)"
+
+  if [ "$solr_major_version" -lt 9 ]; then
+    echo "https://archive.apache.org/dist/lucene/solr/$solr_version/solr-$solr_version.zip"
+  else
+    echo "https://archive.apache.org/dist/solr/solr/$solr_version/solr-$solr_version.tgz"
+  fi
+}
+
 create_dspace_administrator() {
   echo_info "Criando administrador do DSpace"
   "$DSPACE_INSTALLATION_DIR/bin/dspace" create-administrator \

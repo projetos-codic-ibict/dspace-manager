@@ -67,13 +67,19 @@ download_asset() {
 }
 
 handle_dep() {
-  local dep_name_upper="$(echo "$1" | tr "[:lower:]" "[:upper:]")"
+  local dep_name="$1"
+  local dep_name_upper="$(echo "$dep_name" | tr "[:lower:]" "[:upper:]")"
   eval local dep_dir="\$${dep_name_upper}_DIR"
   eval local dep_archive="\$${dep_name_upper}_ARCHIVE"
   eval local dep_archive_url="\$${dep_name_upper}_ARCHIVE_URL"
   local dep_archive_temp_dir
 
   if [ ! -d "$dep_dir" ] ; then
+    if [ -z "$dep_archive_url" ]; then
+      local dep_download_cmd="echo_${dep_name}_download_url"
+      eval dep_archive_url="\$(${dep_download_cmd})"
+    fi
+
     if [ -z "$dep_archive" ]; then
       dep_archive_temp_dir="$(mktemp -d "dspace-manager.XXXXXXXXXX" -p "${TMPDIR:/tmp}")"
       (cd "$dep_archive_temp_dir" && download_asset "$dep_archive_url")
