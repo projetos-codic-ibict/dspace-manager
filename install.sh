@@ -62,16 +62,21 @@ download_asset() {
   return 0
 }
 
-download_and_or_extract_archive() {
-  local download_url="$1"
-  local archive_path="$2"
-  local dir="$3"
+handle_dep() {
+  local dep_name_upper="$(echo "$1" | tr "[:lower:]" "[:upper:]")"
+  eval local dep_dir="\$${dep_name_upper}_DIR"
+  eval local dep_archive="\$${dep_name_upper}_ARCHIVE"
+  eval local dep_archive_url="\$${dep_name_upper}_ARCHIVE_URL"
 
-  if [ ! -f "$archive_path" ]; then
-    download_asset "$download_url" "$archive_path"
+  if [ ! -d "$dep_dir" ] ; then
+    if [ ! -f "$dep_archive" ]; then
+      download_asset "$dep_archive_url" "$dep_archive"
+    fi
+
+    extract_archive "$dep_archive" "$dep_dir" || return 1
+
+    return 0
   fi
-
-  extract_archive "$archive_path" "$dir" || return 1
 
   return 0
 }
@@ -79,17 +84,9 @@ download_and_or_extract_archive() {
 setup_requirements() {
   echo_info "Extraindo arquivos compactados do Maven e Tomcat"
 
-  if [ ! -d "$MAVEN_DIR" ]; then
-    download_and_or_extract_archive "$MAVEN_ARCHIVE_URL" "$MAVEN_ARCHIVE" "$MAVEN_DIR" || return 1
-  fi
-
-  if [ ! -d "$TOMCAT_DIR" ]; then
-    download_and_or_extract_archive "$TOMCAT_ARCHIVE_URL" "$TOMCAT_ARCHIVE" "$TOMCAT_DIR" || return 1
-  fi
-
-  if [ ! -d "$SOLR_DIR" ]; then
-    download_and_or_extract_archive "$SOLR_ARCHIVE_URL" "$SOLR_ARCHIVE" "$SOLR_DIR" || return 1
-  fi
+  handle_dep "maven" || return 1
+  handle_dep "tomcat" || return 1
+  handle_dep "solr" || return 1
 
   echo_info "Tornando scripts do Tomcat em executáveis"
   chmod u+x "$TOMCAT_DIR/bin"/*.sh
