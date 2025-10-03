@@ -23,10 +23,6 @@ check_dir() {
   return 0
 }
 
-echo_file_extension() {
-  echo "$1" | grep -o "\.\w\+$" | sed "s/^.//"
-}
-
 extract_archive() {
   local archive="$1"
   local target_dir="$2"
@@ -35,7 +31,7 @@ extract_archive() {
   check_dir "$target_dir" || return 1
   echo_info "Extraindo $archive"
 
-  case "$(echo_file_extension)" in
+  case "$archive" in
     *.zip)
       unzip "$archive" -d "$temp_dir"
             ;;
