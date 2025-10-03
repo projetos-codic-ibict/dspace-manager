@@ -196,8 +196,13 @@ build &&
 install_dspace &&
 copy_solr_cores &&
 remove_bak_files &&
-add_webapps_to_tomcat &&
-create_dspace_administrator && {
+add_webapps_to_tomcat && (
+  if [ "$CREATE_ADMIN" = true ]; then
+    create_dspace_administrator || exit 1
+  fi
+
+  exit 0
+) && {
   if [ "$INSTALL_SHOULD_REINDEX" != true ]; then
     exit 0
   fi

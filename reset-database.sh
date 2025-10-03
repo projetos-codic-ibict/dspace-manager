@@ -10,4 +10,6 @@ init_variables
 check_postgres
 drop_dspace_user_and_databases
 setup_postgres
-create_dspace_administrator
+if [ "$CREATE_ADMIN" = true ]; then
+  create_dspace_administrator
+fi
