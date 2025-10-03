@@ -45,6 +45,6 @@ init_variables
 check_postgres
 drop_dspace_user_and_databases
 remove_directories
-if [ "$UNINSTALL_SHOULD_REMOVE_DEPENDENCIES" != false ]; then
+if [ "$UNINSTALL_SHOULD_REMOVE_DEPENDENCIES" = true ]; then
   remove_dependencies
 fi
