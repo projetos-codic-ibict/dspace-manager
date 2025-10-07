@@ -175,10 +175,10 @@ stop_tomcat() {
 stop_solr() {
   echo_info "Parando execução do solr"
 
-  if [ "$(echo_solr_major_version)" -gt 9 ]; then
-    "$SOLR_DIR/bin/solr" stop --all
+  if [ -n "$SOLR_PORT" ]; then
+    "$SOLR_DIR/bin/solr" stop -p "$SOLR_PORT"
   else
-    "$SOLR_DIR/bin/solr" stop -all
+    "$SOLR_DIR/bin/solr" stop
   fi
 }
 
@@ -208,6 +208,10 @@ export_dspace_vars() {
 
   export db__P__username="$DSPACE_DB_USERNAME"
   export db__P__password="$DSPACE_DB_PASSWORD"
+
+  if [ -n "$SOLR_PORT" ]; then
+    export solr__P__server="http://localhost:$SOLR_PORT/solr"
+  fi
 }
 
 start_tomcat() {
@@ -221,9 +225,17 @@ start_solr() {
 
   # Solr 9.8 e acima precisam da configuração "solr.config.lib.enabled=true"
   if [ "$(echo_solr_major_version)" -gt 9 ] || ( [ "$(echo_solr_major_version)" = "9" ] && [ "$(echo_solr_minor_version)" -ge 8 ] ); then
-    "$SOLR_DIR/bin/solr" start -Dsolr.config.lib.enabled=true
+    if [ -n "$SOLR_PORT" ]; then
+      "$SOLR_DIR/bin/solr" start -Dsolr.config.lib.enabled=true -p "$SOLR_PORT"
+    else
+      "$SOLR_DIR/bin/solr" start -Dsolr.config.lib.enabled=true
+    fi
   else
-    "$SOLR_DIR/bin/solr" start
+    if [ -n "$SOLR_PORT" ]; then
+      "$SOLR_DIR/bin/solr" start -p "$SOLR_PORT"
+    else
+      "$SOLR_DIR/bin/solr" start
+    fi
   fi
 }
 
