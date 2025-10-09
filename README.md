@@ -54,21 +54,4 @@ install`, etc... a partir de qualquer diretório.
 
 ## Compatibilidade
 
-Os scripts foram testados com as versões 6, 7 e 8 do DSpace.
-
-### Utilizando com a versão 6
-
-Edite o arquivo `pom.xml` com a seguinte alteração:
-```diff
-@@ -1609,9 +1609,8 @@
-         </repository>
-         <!-- Add mirror for restlet - maven-default-http-blocker fix -->
-         <repository>
--            <id>maven-restlet</id>
--            <name>Public online Restlet repository</name>
--            <url>https://maven.restlet.com</url>
-+            <id>restlet-mirror</id>
-+            <url>https://maven.restlet.talend.com</url>
-         </repository>
-     </repositories>
-```
+Os scripts foram testados com as versões 7, 8 e 9 do DSpace.
