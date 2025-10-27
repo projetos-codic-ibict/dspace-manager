@@ -98,7 +98,7 @@ check_java_tool_version() {
     return
   fi
 
-  if [ $has_update_alternatives ]; then
+  if [ "$has_update_alternatives" = true ]; then
     sudo update-alternatives --config "${tool}"
   else
     exit 1
