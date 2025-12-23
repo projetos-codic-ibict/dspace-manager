@@ -13,7 +13,9 @@ on_sigint() {
 trap on_sigint SIGINT
 
 init_variables
-check_java_version
+if [ -z "$JAVA_HOME" ]; then
+  check_java_version
+fi
 if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -gt 6 ]; then
   start_solr
 fi

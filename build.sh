@@ -14,13 +14,16 @@ remove_log_files() {
 update_installation() {
   echo_info "Atualizando instalação"
   cd "$DSPACE_SOURCE_DIR/dspace/target/dspace-installer"
+  export JAVA_HOME
   ant update
 }
 
 init_variables
 check_ant
-check_java_version
-check_javac_version
+if [ -z "$JAVA_HOME" ]; then
+  check_java_version
+  check_javac_version
+fi
 shift
 build "$@"
 remove_log_files

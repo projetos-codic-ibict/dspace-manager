@@ -79,8 +79,10 @@ setup_requirements() {
   chmod u+x "$TOMCAT_DIR/bin"/*.sh
   check_ant
   check_postgres
-  check_java_version
-  check_javac_version
+  if [ -z "$JAVA_HOME" ]; then
+    check_java_version
+    check_javac_version
+  fi
 }
 
 clone_repository() {
@@ -132,6 +134,7 @@ install_dspace() {
   echo_info "Instalando o DSpace"
   mkdir -p "$DSPACE_INSTALLATION_DIR"
   cd "$DSPACE_SOURCE_DIR/dspace/target/dspace-installer"
+  export JAVA_HOME
   ant fresh_install
 
   return 0
@@ -175,6 +178,7 @@ create_dspace_administrator && {
     start_solr
   fi
 
+  export JAVA_HOME
   "$TOMCAT_DIR/bin/catalina.sh" start
 
   tail -f -n 0 "$TOMCAT_DIR/logs/catalina.$(date +"%Y-%m-%d").log" 2>/dev/null | while read -r line; do

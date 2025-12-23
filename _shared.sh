@@ -151,6 +151,8 @@ build() {
   echo_info "Instalando dependências maven"
   echo_info "Você precisa manualmente editar o arquivo de configuração do maven para para preveni-lo de bloquear http, veja: https://stackoverflow.com/a/67295342"
 
+  export JAVA_HOME
+
   if [ "$(echo_dspace_major_version)" = "6" ]; then
     if [ "$1" = "clean" ]; then
       "$MAVEN_DIR/bin/mvn" clean package -P !dspace-sword,!dspace-swordv2,!dspace-oai
@@ -170,21 +172,26 @@ build() {
 
 stop_tomcat() {
   echo_info "Parando execução do tomcat, se já estiver rodando"
+  export JAVA_HOME
   "$TOMCAT_DIR/bin/shutdown.sh" 2> /dev/null
 }
 
 stop_solr() {
   echo_info "Parando execução do solr"
+  export JAVA_HOME
   "$SOLR_DIR/bin/solr" stop --all
 }
 
 start_tomcat() {
   echo_info "Iniciando execução do tomcat"
+  export JAVA_HOME
   "$TOMCAT_DIR/bin/catalina.sh" run
 }
 
 start_solr() {
   echo_info "Iniciando execução do solr"
+
+  export JAVA_HOME
 
   if [ -z "$(echo_dspace_major_version)" ] || [ "$(echo_dspace_major_version)" -ge 9 ]; then
     "$SOLR_DIR/bin/solr" start -Dsolr.config.lib.enabled=true
